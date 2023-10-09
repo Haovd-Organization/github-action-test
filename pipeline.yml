@@ -1,0 +1,49 @@
+name: CI/CD for Next.js to S3
+
+on:
+  push:
+    branches:
+      - main # Change this to the branch you want to trigger the CI/CD
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18 # You can change this to your preferred Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run CI checks (e.g., linting, tests)
+        run: npm run test # Replace with your actual CI script or commands
+
+      - name: Build project
+        run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync index.html s3://$S3_BUCKET
+
+      - name: Invalidate CloudFront Cache (Optional)
+        run: |
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
