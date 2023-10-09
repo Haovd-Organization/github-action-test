@@ -1,14 +1,15 @@
 name: CI/CD for Next.js to S3
 
-on:
-  push:
-    branches:
-      - main # Change this to the branch you want to trigger the CI/CD
+#on:
+#  push:
+#    branches:
+#      - main # Change this to the branch you want to trigger the CI/CD
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    environment:
+      name: ${{ github.ref_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -29,7 +30,8 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-
+    environment:
+      name: ${{ github.ref_name }}
     needs: build
 
     steps:
@@ -49,6 +51,7 @@ jobs:
 
       - name: Deploy to S3
         run: |
+          echo ${{ vars.S3_BUCKET }}
           echo "$S3_BUCKET"
           echo "s3://$S3_BUCKET"
           aws s3 sync output s3://$S3_BUCKET
