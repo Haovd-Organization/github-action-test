@@ -1,7 +1,7 @@
 name: CI/CD for Next.js to S3
 
-#on:
-#  push:
+on:
+  push:
 #    branches:
 #      - main # Change this to the branch you want to trigger the CI/CD
 
