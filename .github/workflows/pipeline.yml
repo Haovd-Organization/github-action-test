@@ -2,14 +2,16 @@ name: CI/CD for Next.js to S3
 
 on:
   push:
-#    branches:
-#      - main # Change this to the branch you want to trigger the CI/CD
+    branches:
+      - 'issue/*'
+      - 'develop'
+      - 'staging'
+      - 'master'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.ref_name }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,6 +32,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    if: github.ref_name == 'develop' || github.ref_name == 'staging' || github.ref_name == 'master'
     environment:
       name: ${{ github.ref_name }}
     needs: build
@@ -37,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -46,12 +49,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get directory
-        run: ls -R
-
       - name: Deploy to S3
         run: |
-          echo ${{ github.ref_name }}
           aws s3 sync output s3://${{ vars.S3_BUCKET }}
 
       - name: Invalidate CloudFront Cache (Optional)
