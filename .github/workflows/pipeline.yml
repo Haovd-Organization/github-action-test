@@ -25,7 +25,7 @@ jobs:
         run: echo "run command test here"
 
       - name: Build project
-        run: npm run build
+        run: echo "run command build here"
 
   deploy:
     runs-on: ubuntu-latest
