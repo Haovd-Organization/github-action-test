@@ -33,6 +33,7 @@ jobs:
     needs: build
 
     steps:
+      - uses: actions/checkout@v4
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -41,9 +42,11 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Get directory
-        run: ls
+        run: ls -R
+
       - name: Deploy to S3
-        run: aws s3 sync index.html s3://$S3_BUCKET
+        uses: actions/checkout@v4
+        run: aws s3 sync output s3://$S3_BUCKET
 
       - name: Invalidate CloudFront Cache (Optional)
         run: |
