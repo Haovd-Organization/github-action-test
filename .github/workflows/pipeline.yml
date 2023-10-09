@@ -12,10 +12,10 @@ jobs:
       name: ${{ github.ref_name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18 # You can change this to your preferred Node.js version
 
@@ -52,10 +52,10 @@ jobs:
       - name: Deploy to S3
         run: |
           echo ${{ vars.S3_BUCKET }}
-          echo "$S3_BUCKET"
-          echo "s3://$S3_BUCKET"
-          aws s3 sync output s3://$S3_BUCKET
+          echo "$vars.S3_BUCKET"
+          echo "s3://$vars.S3_BUCKET"
+          aws s3 sync output s3://$vars.S3_BUCKET
 
       - name: Invalidate CloudFront Cache (Optional)
         run: |
-          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+#          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
