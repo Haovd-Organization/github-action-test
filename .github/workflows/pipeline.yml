@@ -1,16 +1,19 @@
 name: CI/CD for Next.js to S3
 
 on:
+  pull_request:
+    types:
+      - opened
   push:
     branches:
-      - 'issue/*'
       - 'develop'
       - 'staging'
       - 'master'
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: Checkout code
@@ -19,13 +22,29 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # You can change this to your preferred Node.js version
+          node-version: 18
 
       - name: Install dependencies
         run: npm install
 
       - name: Run CI checks (e.g., linting, tests)
         run: echo "run command test here"
+
+  build:
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'develop' || github.ref_name == 'staging' || github.ref_name == 'master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Build project
         run: echo "run command build here"
