@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run CI checks (e.g., linting, tests)
-        run: npm run test # Replace with your actual CI script or commands
+        run: echo "run command test here"
 
       - name: Build project
         run: npm run build
