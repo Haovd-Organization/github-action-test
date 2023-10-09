@@ -51,10 +51,8 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          echo ${{ vars.S3_BUCKET }}
-          echo "$vars.S3_BUCKET"
-          echo "s3://$vars.S3_BUCKET"
-          aws s3 sync output s3://$vars.S3_BUCKET
+          echo ${{ github.ref_name }}
+          aws s3 sync output s3://${{ vars.S3_BUCKET }}
 
       - name: Invalidate CloudFront Cache (Optional)
         run: |
